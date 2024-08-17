@@ -10,8 +10,8 @@ generator client {
 model User {
   id                      Int            @id @default(autoincrement())
   email                   String         @unique
-  passwordHash            String
-  username                String
+  passwordHash            String?
+  username                String?
   isVerified              Boolean        @default(false)
   verificationToken       String?        @unique // Token for email verification
   verificationTokenExpiry DateTime? // Expiry date of the verification token

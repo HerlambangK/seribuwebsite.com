@@ -34,6 +34,15 @@ export default defineNuxtConfig({
 	alias: {
 		'@utils': resolve(__dirname, 'utils'),
 	},
+	auth: {
+		strategies: {
+			google: {
+				clientId: process.env.GOOGLE_CLIENT_ID,
+				codeChallengeMethod: '',
+				redirectUri: `${process.env.BASE_URL}/api/auth/callback`, // Ini harus sesuai dengan yang Anda setel di Google
+			},
+		},
+	},
 	// nitro: {
 	// 	middleware: [
 	// 		'~/server/middleware/auth.ts', // Include the middleware
