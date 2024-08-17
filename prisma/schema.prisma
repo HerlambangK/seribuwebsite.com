@@ -8,32 +8,48 @@ generator client {
 }
 
 model User {
-  id                      Int           @id @default(autoincrement())
-  email                   String        @unique
+  id                      Int            @id @default(autoincrement())
+  email                   String         @unique
   passwordHash            String
   username                String
-  isVerified              Boolean       @default(false)
-  verificationToken       String?       @unique // Token for email verification
+  isVerified              Boolean        @default(false)
+  verificationToken       String?        @unique // Token for email verification
   verificationTokenExpiry DateTime? // Expiry date of the verification token
-  magicLinkToken          String?       @unique
+  magicLinkToken          String?        @unique
   magicLinkExpiry         DateTime?
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime      @updatedAt
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
   orders                  Order[]
   oauths                  OAuth[]
   customRequests          CustomOrder[]
-  admin                   Admin?        @relation(fields: [adminId], references: [id])
-  adminId                 Int?
+  RefreshToken            RefreshToken[]
+  updatedByAdminId        Int? // Tambahkan kolom ini
+  updatedByAdmin          Admin?         @relation(fields: [updatedByAdminId], references: [id])
 }
 
 model Admin {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  username     String
+  password     String
+  users        User[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  RefreshToken RefreshToken[]
+}
+
+model RefreshToken {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String
-  password  String
-  users     User[]
+  token     String   @unique
+  userId    Int?
+  adminId   Int?
+  expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  User      User?    @relation(fields: [userId], references: [id])
+  Admin     Admin?   @relation(fields: [adminId], references: [id])
+
+  @@index([userId, adminId]) // Indeks untuk kombinasi userId dan adminId
 }
 
 model Order {

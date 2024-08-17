@@ -4,14 +4,18 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '@/server/db';
 
 const authMiddleware = defineEventHandler(async (event: H3Event) => {
-	// Tentukan rute yang tidak memerlukan autentikasi (login, register)
-	const publicRoutes = ['/api/auth/login', '/api/auth/register'];
+	// Rute publik yang tidak memerlukan autentikasi
+	const publicRoutes = [
+		'/api/auth/login',
+		'/api/auth/register',
+		'/api/auth/verify-email',
+		'/api/auth/request-magic-link',
+	];
 
-	// Jika rute adalah rute publik, lewati middleware
 	const url = event.node.req.url;
 
-	// Skip middleware for public routes
-	if (url && publicRoutes.includes(url)) {
+	// Lewati middleware untuk rute publik
+	if (url && publicRoutes.some((route) => url.startsWith(route))) {
 		return;
 	}
 
@@ -30,16 +34,22 @@ const authMiddleware = defineEventHandler(async (event: H3Event) => {
 		const decoded = jwt.verify(
 			token,
 			process.env.JWT_SECRET || 'your-secret-key'
-		);
+		) as { userId: number; role: string };
 
-		// Cari user berdasarkan ID dari token yang didekodekan
+		// Cari user atau admin berdasarkan ID dari token yang didekodekan
 		const user = await prisma.user.findUnique({
 			where: {
 				id: decoded.userId,
 			},
 		});
 
-		if (!user) {
+		const admin = await prisma.admin.findUnique({
+			where: {
+				id: decoded.userId,
+			},
+		});
+
+		if (!user && !admin) {
 			throw createError({
 				statusCode: 401,
 				statusMessage: 'Pengguna tidak ditemukan.',
@@ -47,7 +57,14 @@ const authMiddleware = defineEventHandler(async (event: H3Event) => {
 		}
 
 		// Tambahkan informasi user ke context
-		event.context.user = user;
+		if (user) {
+			event.context.user = user;
+		}
+
+		// Tambahkan informasi admin ke context jika pengguna adalah admin
+		if (admin) {
+			event.context.admin = admin;
+		}
 	} catch (error) {
 		throw createError({
 			statusCode: 401,

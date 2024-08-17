@@ -23,6 +23,20 @@ export default defineEventHandler(async (event) => {
 	const token = randomBytes(32).toString('hex');
 	const expiry = new Date(Date.now() + 15 * 60 * 1000); // Token valid for 15 minutes
 
+	// Check if user already has a magic link token
+	const existingToken = user.magicLinkExpiry;
+
+	if (existingToken && existingToken > new Date()) {
+		const timeRemaining = Math.ceil(
+			(existingToken.getTime() - Date.now()) / (1000 * 60)
+		);
+
+		throw createError({
+			statusCode: 400,
+			message: `Magic link already sent.  Silahkan coba lagi dalam ${timeRemaining} menit.`,
+		});
+	}
+
 	// Save token and expiry to user record
 	await prisma.user.update({
 		where: { email },
@@ -50,7 +64,9 @@ export default defineEventHandler(async (event) => {
 		from: `"Magic Link" <${process.env.SMTP_USER}>`,
 		to: user.email,
 		subject: 'Your Magic Link for Login',
-		text: `Click the link below to log in:\n\n${magicLink}\n\nThis link will expire in 15 minutes.`,
+		text: `Click the link below to log in:\n\n${magicLink}\n\nThis link will expire in ${Math.ceil(
+			(expiry.getTime() - Date.now()) / (1000 * 60)
+		)} menit atau ${Math.ceil((expiry.getTime() - Date.now()) / 1000)} detik.`,
 	});
 
 	return { message: 'Magic link sent to your email.' };

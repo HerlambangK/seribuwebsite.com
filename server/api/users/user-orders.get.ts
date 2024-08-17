@@ -1,33 +1,28 @@
-// server/api/order/index.get.ts
+// server/api/order/user-orders.get.ts
 import { defineEventHandler, H3Event } from 'h3';
 import { prisma } from '@/server/db';
 
 export default defineEventHandler(async (event: H3Event) => {
-	const admin = event.context.admin;
+	const user = event.context.user;
 
-	if (!admin) {
+	if (!user) {
 		throw createError({
 			statusCode: 403,
-			statusMessage:
-				'Akses ditolak. Hanya admin yang dapat melihat semua order.',
+			statusMessage: 'Akses ditolak. Anda harus login untuk melihat order.',
 		});
 	}
 
-	// Mengambil semua order
+	// Mengambil order berdasarkan ID pengguna yang login
 	const orders = await prisma.order.findMany({
+		where: {
+			userId: user.id,
+		},
 		include: {
 			package: true,
 			customOrder: true,
-			user: {
-				select: {
-					id: true,
-					username: true, // Ambil informasi pengguna terkait
-				},
-			},
+			user: true,
 		},
 	});
-
-	// Format hasil dengan relasi
 	const formattedOrders = orders.map((order) => ({
 		id: order.id,
 		user: order.user.username,
@@ -49,7 +44,6 @@ export default defineEventHandler(async (event: H3Event) => {
 		status: order.status,
 		totalPrice: order.totalPrice,
 		createdAt: order.createdAt,
-		updatedAt: order.updatedAt,
 	}));
 
 	return formattedOrders;

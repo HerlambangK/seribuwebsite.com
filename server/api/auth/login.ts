@@ -1,14 +1,9 @@
 // server/api/auth/login.ts
-import { defineEventHandler, readBody } from 'h3';
+import { defineEventHandler, readBody, getRequestHeaders } from 'h3';
 import { prisma } from '@/server/db';
 import { z } from 'zod';
-import { generateJwt, verifyPassword } from '@/utils/auth';
-import nodemailer from 'nodemailer';
+import { generateJwt, verifyPassword, saveRefreshToken } from '@/utils/auth';
 import { sendLoginEmail } from '~/utils/email';
-// import { guestMiddleware } from '~/server/middleware/guest';
-// import { guestMiddleware } from '~/server/middleware/guest';
-
-// import { generateJwt } from '@/utils/jwt';
 
 const loginSchema = z.object({
 	email: z.string().email(),
@@ -16,19 +11,34 @@ const loginSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-	// guestMiddleware(event); // Ensure guest access only
-
 	const body = await readBody(event);
 	const { email, password } = loginSchema.parse(body);
 
-	const user = await prisma.user.findUnique({ where: { email } });
-	if (!user) {
-		throw createError({
-			statusCode: 401,
-			message: 'Invalid email or password',
-		});
+	// Cek apakah email terkait dengan admin
+	const admin = await prisma.admin.findUnique({ where: { email } });
+	if (admin) {
+		if (!(await verifyPassword(password, admin.password))) {
+			throw createError({
+				statusCode: 401,
+				message: 'Invalid email or password',
+			});
+		}
+		// Generate JWT for admin
+		const { accessToken, refreshToken } = generateJwt(admin.id, 'admin');
+
+		// Save refresh token to the database
+		await saveRefreshToken(null, admin.id, refreshToken);
+
+		return {
+			accessToken,
+			refreshToken,
+			role: 'admin',
+			message: 'Admin logged in successfully',
+		};
 	}
 
+	// Cek apakah email terkait dengan user biasa
+	const user = await prisma.user.findUnique({ where: { email } });
 	if (!user || !(await verifyPassword(password, user.passwordHash))) {
 		throw createError({
 			statusCode: 401,
@@ -55,6 +65,16 @@ export default defineEventHandler(async (event) => {
 
 	await sendLoginEmail(user.email, userAgent, ipAddress, magicLink);
 
-	const token = generateJwt(user.id);
-	return { token };
+	// Generate JWT for user
+	const { accessToken, refreshToken } = generateJwt(user.id, 'user');
+
+	// Save refresh token to the database
+	await saveRefreshToken(user.id, null, refreshToken);
+
+	return {
+		accessToken,
+		refreshToken,
+		role: 'user',
+		message: 'User logged in successfully',
+	};
 });

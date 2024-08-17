@@ -1,13 +1,7 @@
 import { defineEventHandler, H3Event, readBody } from 'h3';
-// import prisma from '~/server/prisma/client';
-// import authMiddleware from '~/server/middleware/auth';
 import { prisma } from '@/server/db';
 
 export default defineEventHandler(async (event: H3Event) => {
-	// Middleware Autentikasi
-	// await authMiddleware(event);
-
-	// Ambil userId dari context yang sudah di-autentikasi
 	const userId = event.context.user.id;
 
 	// Baca data dari request body
@@ -15,12 +9,29 @@ export default defineEventHandler(async (event: H3Event) => {
 	const { packageId, customOrderData } = body;
 
 	// Validasi input
-	if (!packageId && !customOrderData) {
+	if (!packageId) {
 		throw createError({
 			statusCode: 400,
-			statusMessage: 'Package ID or custom order data is required',
+			statusMessage: 'Package ID is required',
 		});
 	}
+
+	if (![1, 2, 3].includes(packageId)) {
+		throw createError({
+			statusCode: 400,
+			statusMessage: 'Invalid package ID',
+		});
+	}
+
+	if (packageId === 3 && !customOrderData) {
+		throw createError({
+			statusCode: 400,
+			statusMessage: 'Custom order data is required for package ID 3',
+		});
+	}
+
+	// Debug log untuk memeriksa nilai
+	console.log('Creating order with:', { userId, packageId, customOrderData });
 
 	// Membuat pesanan baru
 	const newOrder = await prisma.order.create({
@@ -28,14 +39,14 @@ export default defineEventHandler(async (event: H3Event) => {
 			userId,
 			packageId,
 			status: 'Pending',
-			totalPrice: packageId ? await calculatePackagePrice(packageId) : 0,
+			totalPrice: packageId !== 3 ? await calculatePackagePrice(packageId) : 0,
 			customOrder: customOrderData
 				? {
 						create: {
-							websiteType: customOrderData.websiteType,
-							details: customOrderData.details,
-							pageCount: customOrderData.pageCount,
-							requirements: customOrderData.requirements,
+							websiteType: customOrderData.websiteType || '',
+							details: customOrderData.details || '',
+							pageCount: customOrderData.pageCount || 0,
+							requirements: customOrderData.requirements || '',
 							status: 'Pending',
 						},
 				  }
