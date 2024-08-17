@@ -1,12 +1,12 @@
 <!-- pages/orders.vue -->
 <template>
   <div>
-    <OrderList />
+    <!-- <OrderList /> -->
   </div>
 </template>
 
 <script setup>
-  import OrderList from "~/components/Order/OrderList.vue";
+  // import OrderList from "~/components/Order/OrderList.vue";
 </script>
 
 <style scoped>

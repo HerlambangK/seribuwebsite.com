@@ -1,12 +1,12 @@
 <!-- pages/dashboard/index.vue -->
 <template>
   <div>
-    <UserDashboard />
+    <!-- <UserDashboard /> -->
   </div>
 </template>
 
 <script setup>
-  import UserDashboard from "~/components/Dashboard/UserDashboard.vue";
+  // import UserDashboard from "~/components/Dashboard/UserDashboard.vue";
 </script>
 
 <style scoped>

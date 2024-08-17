@@ -1,12 +1,12 @@
 <!-- pages/payment.vue -->
 <template>
   <div>
-    <PaymentForm />
+    <!-- <PaymentForm /> -->
   </div>
 </template>
 
 <script setup>
-  import PaymentForm from "~/components/Payment/PaymentForm.vue";
+  // import PaymentForm from "~/components/Payment/PaymentForm.vue";
 </script>
 
 <style scoped>

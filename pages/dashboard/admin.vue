@@ -1,12 +1,12 @@
 <!-- pages/dashboard/admin.vue -->
 <template>
   <div>
-    <AdminDashboard />
+    <!-- <AdminDashboard /> -->
   </div>
 </template>
 
 <script setup>
-  import AdminDashboard from "~/components/Dashboard/AdminDashboard.vue";
+  // import AdminDashboard from "~/components/Dashboard/AdminDashboard.vue";
 </script>
 
 <style scoped>
