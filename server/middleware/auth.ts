@@ -6,6 +6,7 @@ import { prisma } from '@/server/db';
 const authMiddleware = defineEventHandler(async (event: H3Event) => {
 	// Rute publik yang tidak memerlukan autentikasi
 	const publicRoutes = [
+		'/',
 		'/api/auth/login',
 		'/api/auth/register',
 		'/api/auth/verify-email',
