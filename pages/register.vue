@@ -2,11 +2,12 @@
 <template>
   <div class="mx-auto mt-[10vh]">
     <Register />
+    <!-- <ComponentsRegister /> -->
   </div>
 </template>
 
 <script setup>
-  import Register from "~/components/Register.vue";
+  import Register from "../components/register.vue";
 </script>
 
 <style scoped>
