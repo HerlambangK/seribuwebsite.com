@@ -87,11 +87,13 @@ export default defineEventHandler(async (event) => {
 				statusMessage: 'You are not allowed to update this order',
 			});
 		}
+		const adminId = event.context.admin;
 
 		const updatedOrder = await prisma.order.update({
 			where: { id: orderId },
 			data: {
 				packageId,
+				...(adminId ? { updatedByAdminId: adminId } : {}),
 			},
 		});
 
