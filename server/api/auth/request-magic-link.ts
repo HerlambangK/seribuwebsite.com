@@ -13,10 +13,10 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!user) {
-    throw createError({
+    return {
       statusCode: 404,
       message: "Email not found",
-    });
+    };
   }
 
   // Generate a unique token
@@ -29,10 +29,10 @@ export default defineEventHandler(async (event) => {
   if (existingToken && existingToken > new Date()) {
     const timeRemaining = Math.ceil((existingToken.getTime() - Date.now()) / (1000 * 60));
 
-    throw createError({
+    return {
       statusCode: 400,
       message: `Magic link already sent.  Silahkan coba lagi dalam ${timeRemaining} menit.`,
-    });
+    };
   }
 
   // Save token and expiry to user record

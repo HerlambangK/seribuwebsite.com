@@ -4,10 +4,10 @@ import { createError, defineEventHandler, useQuery } from "h3";
 export default defineEventHandler(async (event) => {
   // Pastikan user sudah terautentikasi
   if (!event.context.user) {
-    throw createError({
+    return {
       statusCode: 401,
       statusMessage: "Autentikasi diperlukan untuk akses ini.",
-    });
+    };
   }
 
   // Dapatkan ID user dari parameter
@@ -15,10 +15,10 @@ export default defineEventHandler(async (event) => {
 
   // Validasi jika ID tidak valid
   if (!id || isNaN(Number(id))) {
-    throw createError({
+    return {
       statusCode: 400,
       statusMessage: "ID user tidak valid.",
-    });
+    };
   }
 
   // Ambil data user berdasarkan ID
@@ -34,10 +34,10 @@ export default defineEventHandler(async (event) => {
 
   // Jika user tidak ditemukan
   if (!user) {
-    throw createError({
+    return {
       statusCode: 404,
       statusMessage: "User tidak ditemukan.",
-    });
+    };
   }
 
   // Format output sesuai kebutuhan Anda

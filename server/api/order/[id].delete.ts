@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!order) {
-    throw createError({ statusCode: 404, statusMessage: "Order not found" });
+    return { statusCode: 404, statusMessage: "Order not found" };
   }
 
   // Cek apakah status payment sudah success
@@ -19,10 +19,10 @@ export default defineEventHandler(async (event) => {
   });
 
   if (payment?.status === "success" || payment?.status === "payed") {
-    throw createError({
+    return {
       statusCode: 403,
       statusMessage: "Order cannot be deleted after payment is completed",
-    });
+    };
   }
 
   // Hapus order

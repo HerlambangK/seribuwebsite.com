@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const email = payload?.email;
 
   if (!email) {
-    throw createError({ statusCode: 401, message: "Invalid token" });
+    return { statusCode: 401, message: "Invalid token" };
   }
 
   let user = await prisma.user.findUnique({ where: { email } });

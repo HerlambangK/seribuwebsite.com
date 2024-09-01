@@ -6,10 +6,10 @@ export default defineEventHandler(async (event: H3Event) => {
   const admin = event.context.admin;
 
   if (!admin) {
-    throw createError({
+    return {
       statusCode: 403,
       statusMessage: "Akses ditolak. Hanya admin yang dapat melihat semua order.",
-    });
+    };
   }
 
   // Mengambil semua order

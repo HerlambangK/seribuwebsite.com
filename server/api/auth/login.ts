@@ -18,10 +18,11 @@ export default defineEventHandler(async (event) => {
   const admin = await prisma.admin.findUnique({ where: { email } });
   if (admin) {
     if (!(await verifyPassword(password, admin.password))) {
-      throw createError({
+      return {
         statusCode: 401,
+        status: "error",
         message: "Invalid email or password",
-      });
+      };
     }
     // Generate JWT for admin
     const { accessToken, refreshToken } = generateJwt(admin.id, "admin");
@@ -39,15 +40,15 @@ export default defineEventHandler(async (event) => {
 
   // Cek apakah email terkait dengan user biasa
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || !(await verifyPassword(password, user.passwordHash))) {
-    throw createError({
+  if (!user || !user.passwordHash || !(await verifyPassword(password, user.passwordHash))) {
+    return {
       statusCode: 401,
+      status: "error",
       message: "Invalid email or password",
-    });
+    };
   }
-
   if (!user.isVerified) {
-    throw createError({ statusCode: 403, message: "Email not verified" });
+    return { statusCode: 403, message: "Email not verified", status: "error" };
   }
 
   // Ambil informasi user agent dan IP address

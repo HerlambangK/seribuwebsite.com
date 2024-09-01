@@ -1,10 +1,12 @@
 <!-- pages/index.vue -->
 <template>
-  <div>
-    <h1>Welcome to the Homepage</h1>
+  <div class="centre mx-auto">
+    <h1 class="text-3xl font-bold">Welcome to the Homepage</h1>
     <!-- <NuxtLink to="/dashboard">Go to Dashboard</NuxtLink> -->
-    <!-- <NuxtLink to="/login">Login</NuxtLink> -->
-    <NuxtLink to="/register">Register</NuxtLink>
+    <div class="mt-4">
+      <NuxtLink to="/login">Login</NuxtLink>
+    </div>
+    <NuxtLink to="/register" class="btn">Register</NuxtLink>
     <!-- Main content for the homepage -->
   </div>
 </template>

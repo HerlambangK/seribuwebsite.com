@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     // Ambil refresh token dari cookie
     const refreshToken = getCookie(event, "refreshToken");
     if (!refreshToken) {
-      throw createError({ statusCode: 401, message: "No refresh token found" });
+      return { statusCode: 401, message: "No refresh token found" };
     }
 
     // Hapus refresh token dari database
@@ -29,9 +29,9 @@ export default defineEventHandler(async (event) => {
 
     return { message: "Successfully logged out" };
   } catch (error: any) {
-    throw createError({
+    return {
       statusCode: 500,
       message: "Logout failed: " + (error.message || "Unknown error"),
-    });
+    };
   }
 });

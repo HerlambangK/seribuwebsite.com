@@ -6,17 +6,17 @@ export default defineEventHandler(async (event) => {
   const user = event.context.user;
 
   if (!user) {
-    throw createError({
+    return {
       statusCode: 401,
       statusMessage: "Unauthorized",
-    });
+    };
   }
 
   if (!orderId) {
-    throw createError({
+    return {
       statusCode: 400,
       statusMessage: "Invalid order ID",
-    });
+    };
   }
 
   const body = await readBody(event);
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!order) {
-    throw createError({ statusCode: 404, statusMessage: "Order not found" });
+    return { statusCode: 404, statusMessage: "Order not found" };
   }
 
   // Proses pembayaran dan update status

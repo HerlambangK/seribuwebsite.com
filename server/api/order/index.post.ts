@@ -10,24 +10,24 @@ export default defineEventHandler(async (event: H3Event) => {
 
   // Validasi input
   if (!packageId) {
-    throw createError({
+    return {
       statusCode: 400,
       statusMessage: "Package ID is required",
-    });
+    };
   }
 
   if (![1, 2, 3].includes(packageId)) {
-    throw createError({
+    return {
       statusCode: 400,
       statusMessage: "Invalid package ID",
-    });
+    };
   }
 
   if (packageId === 3 && !customOrderData) {
-    throw createError({
+    return {
       statusCode: 400,
       statusMessage: "Custom order data is required for package ID 3",
-    });
+    };
   }
 
   // Debug log untuk memeriksa nilai
@@ -68,10 +68,10 @@ async function calculatePackagePrice(packageId: number) {
   });
 
   if (!selectedPackage) {
-    throw createError({
+    return {
       statusCode: 404,
       statusMessage: "Package not found",
-    });
+    };
   }
 
   return selectedPackage.price;

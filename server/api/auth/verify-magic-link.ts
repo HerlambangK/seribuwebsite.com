@@ -8,10 +8,10 @@ export default defineEventHandler(async (event) => {
   const { token } = query;
 
   if (!token) {
-    throw createError({
+    return {
       statusCode: 400,
       message: "Token is required",
-    });
+    };
   }
 
   // Cari user berdasarkan token

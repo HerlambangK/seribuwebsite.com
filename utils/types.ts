@@ -4,7 +4,7 @@ export interface User {
   email: string;
   username: string;
   isVerified: boolean;
-  role?: "admin" | "user"; // Optional, depending on your user model
+  role?: string | "admin" | "user"; // Optional, depending on your user model
 }
 
 export interface Order {

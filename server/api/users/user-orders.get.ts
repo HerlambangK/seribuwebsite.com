@@ -6,10 +6,10 @@ export default defineEventHandler(async (event: H3Event) => {
   const user = event.context.user;
 
   if (!user) {
-    throw createError({
+    return {
       statusCode: 403,
       statusMessage: "Akses ditolak. Anda harus login untuk melihat order.",
-    });
+    };
   }
 
   // Mengambil order berdasarkan ID pengguna yang login

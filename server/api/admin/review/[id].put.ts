@@ -12,10 +12,10 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!order || !order.customOrder) {
-    throw createError({
+    return {
       statusCode: 404,
       statusMessage: "Custom order not found",
-    });
+    };
   }
 
   // Update status menjadi Reviewed dan set harga

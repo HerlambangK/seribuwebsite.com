@@ -7,16 +7,16 @@ export default defineEventHandler(async (event) => {
   const { refreshToken } = body;
 
   if (!refreshToken) {
-    throw createError({
+    return {
       statusCode: 400,
       message: "Refresh token is required",
-    });
+    };
   }
 
   // Verifikasi refresh token
   const payload = verifyRefreshToken(refreshToken);
   if (!payload) {
-    throw createError({ statusCode: 401, message: "Invalid refresh token" });
+    return { statusCode: 401, message: "Invalid refresh token" };
   }
 
   // Cek apakah refresh token ada di database
@@ -27,10 +27,10 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!dbToken) {
-    throw createError({
+    return {
       statusCode: 401,
       message: "Refresh token not found in database",
-    });
+    };
   }
 
   // Generate new tokens

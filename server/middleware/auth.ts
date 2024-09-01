@@ -24,10 +24,10 @@ const authMiddleware = defineEventHandler(async (event: H3Event) => {
   const token = getHeader(event, "authorization")?.split(" ")[1];
 
   if (!token) {
-    throw createError({
+    return {
       statusCode: 401,
       statusMessage: "Token tidak ditemukan, autentikasi diperlukan.",
-    });
+    };
   }
 
   try {
@@ -51,10 +51,10 @@ const authMiddleware = defineEventHandler(async (event: H3Event) => {
     });
 
     if (!user && !admin) {
-      throw createError({
+      return {
         statusCode: 401,
         statusMessage: "Pengguna tidak ditemukan.",
-      });
+      };
     }
 
     // Tambahkan informasi user ke context
@@ -67,10 +67,10 @@ const authMiddleware = defineEventHandler(async (event: H3Event) => {
       event.context.admin = admin;
     }
   } catch (error) {
-    throw createError({
+    return {
       statusCode: 401,
       statusMessage: "Token tidak valid atau sudah kadaluarsa.",
-    });
+    };
   }
 });
 

@@ -1,14 +1,10 @@
-<!-- pages/dashboard/admin.vue -->
 <template>
-  <div>
-    <!-- <AdminDashboard /> -->
-  </div>
+  <NavBarComponent />
+  {{ metaSymbol }}
+  <p>Admin Dashboard</p>
 </template>
 
-<script setup>
-  // import AdminDashboard from "~/components/Dashboard/AdminDashboard.vue";
-</script>
+<script lang="ts" setup>
+const { metaSymbol } = useShortcuts();
 
-<style scoped>
-  /* Add styles for the admin dashboard */
-</style>
+</script>

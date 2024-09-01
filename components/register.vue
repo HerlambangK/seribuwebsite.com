@@ -38,22 +38,24 @@
   import { ref } from "vue";
   import { z } from "zod";
 
-  //   const validationSchema = z.object({
-  //     email: z
-  //       .string({
-  //         required_error: "Email wajib diisi",
-  //       })
-  //       .email("Email harus valid"),
-  //     password: z
-  //       .string({
-  //         required_error: "Password wajib diisi",
-  //       })
-  //       .min(6, "Password minimal 6 karakter"),
-  //     username: z.string().min(3, "Username minimal 3 karakter").optional(),
-  //   });
+  const validationSchema = toTypedSchema(
+    z.object({
+      email: z
+        .string({
+          required_error: "Email wajib diisi",
+        })
+        .email("Email harus valid"),
+      password: z
+        .string({
+          required_error: "Password wajib diisi",
+        })
+        .min(6, "Password minimal 6 karakter"),
+      username: z.string().min(3, "Username minimal 3 karakter").optional(),
+    })
+  );
 
   const { handleSubmit } = useForm({
-    // validationSchema,
+    validationSchema,
   });
 
   const loading = ref(false);
@@ -73,14 +75,16 @@
       // });
       const data = await authStore.register(values.email, values.password, values.username);
 
-      if (data.value) {
-        if (data.value.message) {
-          message.value = data.value.message;
+      console.log("data.value", data.value);
+      console.log("data", data);
+      if (data.message) {
+        if (data.message) {
+          message.value = data.message;
         }
       }
     } catch (errorResponse) {
       console.log(errorResponse);
-      if (errorResponse.response && errorResponse.response.data) {
+      if (errorResponse?.response && errorResponse?.response.data) {
         error.value =
           errorResponse.response.data.message || "Terjadi kesalahan. Silakan coba lagi.";
       } else {

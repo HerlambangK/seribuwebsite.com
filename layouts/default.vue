@@ -13,8 +13,12 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup><
+  import { useActiveScroll} from "vue-use-active-scroll";
+
+const { toc, navigation } = useContent(); 
+</script>
 
 <style scoped>
-  /* Add styles for layout */
+/* Add styles for layout */
 </style>

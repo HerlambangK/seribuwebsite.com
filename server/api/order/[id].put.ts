@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
   // Verifikasi apakah user login
   // if (!user) {
-  // 	throw createError({
+  // 	return({
   // 		statusCode: 401,
   // 		statusMessage: 'Unauthorized',
   // 	});
@@ -18,10 +18,10 @@ export default defineEventHandler(async (event) => {
   const orderId = parseInt(event.context.params?.id as string);
 
   if (isNaN(orderId)) {
-    throw createError({
+    return {
       statusCode: 400,
       statusMessage: "Invalid order ID",
-    });
+    };
   }
 
   const body = await readBody(event);
@@ -33,10 +33,10 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!order) {
-    throw createError({
+    return {
       statusCode: 404,
       statusMessage: "Order not found",
-    });
+    };
   }
 
   // Cek apakah status payment sudah success
@@ -46,17 +46,17 @@ export default defineEventHandler(async (event) => {
 
   // Cek apakah status sudah Reviewed
   if (order.status === "Reviewed") {
-    throw createError({
+    return {
       statusCode: 403,
       statusMessage: "Custom order cannot be updated after being reviewed",
-    });
+    };
   }
 
   if (payment?.status === "success" || payment?.status === "paid") {
-    throw createError({
+    return {
       statusCode: 403,
       statusMessage: "Order cannot be updated after payment is completed",
-    });
+    };
   }
 
   // Cek apakah user adalah admin jika adminId tersedia
@@ -82,10 +82,10 @@ export default defineEventHandler(async (event) => {
   } else {
     // Pastikan user yang login memiliki akses untuk memperbarui
     if (order.userId !== user.id) {
-      throw createError({
+      return {
         statusCode: 403,
         statusMessage: "You are not allowed to update this order",
-      });
+      };
     }
     const adminId = event.context.admin;
 

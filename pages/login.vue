@@ -1,14 +1,15 @@
-<!-- pages/login.vue -->
+<!-- pages/register.vue -->
 <template>
-  <div>
-    <!-- <LoginForm /> -->
+  <div class="mx-auto mt-[10vh]">
+    <Login />
+    <!-- <ComponentsRegister /> -->
   </div>
 </template>
 
 <script setup>
-  // import LoginForm from "~/components/Auth/LoginForm.vue";
+  import Login from "../components/login.vue";
 </script>
 
 <style scoped>
-  /* Add styles for the login page */
+  /* Add styles for the register page */
 </style>

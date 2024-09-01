@@ -4,10 +4,10 @@ import { defineEventHandler } from "h3";
 export default defineEventHandler(async (event) => {
   // Pastikan user sudah terautentikasi
   if (!event.context.user) {
-    throw createError({
+    return {
       statusCode: 401,
       statusMessage: "Autentikasi diperlukan untuk akses ini.",
-    });
+    };
   }
 
   // Ambil semua user dari database
