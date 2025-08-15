@@ -86,10 +86,9 @@ const onSubmit = handleSubmit(async (values) => {
       // Handle successful login
       const redirectPath = data.role === "admin" ? "/dashboard/admin" : "/dashboard";
       router.push(redirectPath); // Redirect to the appropriate dashboard
-    } else if (data && "error" in data) {
-      // Handle error response
+    } else if (data && "error" in data && data.error) {
       error.value = data.error;
-    } else if (data && "message" in data) {
+    } else if (data && "message" in data && data.message) {
       // Handle message response
       message.value = data.message;
     }

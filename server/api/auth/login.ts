@@ -34,6 +34,7 @@ export default defineEventHandler(async (event) => {
       accessToken,
       refreshToken,
       role: "admin",
+      username: admin.username,
       message: "Admin logged in successfully",
     };
   }
@@ -76,6 +77,7 @@ export default defineEventHandler(async (event) => {
     accessToken,
     refreshToken,
     role: "user",
+    username: user.username,
     message: "User logged in successfully",
   };
 });

@@ -1,11 +1,10 @@
 <!-- layouts/default.vue -->
 <template>
   <div>
-    <header>
-      <!-- Global Header or Navbar -->
-    </header>
+    <NavBarComponent />
     <main>
-      <NuxtPage />
+      <!-- <NuxtPage /> -->
+      <slot />
     </main>
     <footer>
       <!-- Global Footer -->
@@ -13,10 +12,10 @@
   </div>
 </template>
 
-<script setup><
-  import { useActiveScroll} from "vue-use-active-scroll";
+<script setup>
+// import { useActiveScroll} from "vue-use-active-scroll";
 
-const { toc, navigation } = useContent(); 
+// const { toc, navigation} = useContent(); 
 </script>
 
 <style scoped>

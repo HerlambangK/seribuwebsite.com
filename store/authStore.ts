@@ -6,6 +6,7 @@ type LoginResponse = {
   accessToken: string;
   refreshToken: string;
   user: User;
+  username: string;
   role: "admin" | "user";
 };
 
@@ -23,7 +24,8 @@ export const useAuthStore = defineStore("auth", {
     accessToken: useCookie("accessToken").value || "",
     refreshToken: useCookie("refreshToken").value || "",
     role: useCookie("role").value || "",
-    theme: useCookie("theme").value || "light", // Tambahkan theme ke state
+    theme: useCookie("theme").value || "light",
+    username: useCookie("username").value || "",
   }),
   actions: {
     async login(email: string, password: string) {
@@ -38,14 +40,15 @@ export const useAuthStore = defineStore("auth", {
 
         if (data.value && "accessToken" in data.value) {
           this.user = data.value.user;
-          this.accessToken = data.value.accessToken || ""; // Default to empty string if undefined
-          this.refreshToken = data.value.refreshToken || ""; // Default to empty string if undefined
-          this.role = data.value.role || ""; // Default to empty string if undefined
-
+          this.accessToken = data?.value?.accessToken;
+          this.refreshToken = data?.value?.refreshToken;
+          this.role = data?.value?.role;
+          this.username = data?.value?.username;
           // Save tokens in cookies
           useCookie("accessToken").value = this.accessToken;
           useCookie("refreshToken").value = this.refreshToken;
           useCookie("role").value = this.role;
+          useCookie("username").value = this.username;
 
           return data.value;
         } else if (data.value && "error" in data.value) {
@@ -69,14 +72,16 @@ export const useAuthStore = defineStore("auth", {
 
         if (data.value && "accessToken" in data.value) {
           this.user = data.value.user;
-          this.accessToken = data.value.accessToken || ""; // Default to empty string if undefined
-          this.refreshToken = data.value.refreshToken || ""; // Default to empty string if undefined
-          this.role = data.value.role || ""; // Default to empty string if undefined
+          this.accessToken = data?.value?.accessToken;
+          this.refreshToken = data?.value?.refreshToken;
+          this.role = data?.value?.role;
+          this.username = data?.value?.username;
 
           // Save tokens in cookies
           useCookie("accessToken").value = this.accessToken;
           useCookie("refreshToken").value = this.refreshToken;
           useCookie("role").value = this.role;
+          useCookie("username").value = this.username;
 
           return data.value;
         } else if (data.value && "error" in data.value) {

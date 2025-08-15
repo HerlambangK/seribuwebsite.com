@@ -9,34 +9,23 @@
           <NuxtLink to="/" class="text-lg font-bold">Seribu Website</NuxtLink>
         </div>
         <nav class="hidden items-center space-x-6 text-sm font-medium lg:flex">
-          <template v-for="(item, index) in NavMenuAdmin" :key="index">
-            <NuxtLink v-if="!item.children || item.children.length === 0"
-              :class="[$route.path.includes(item.link) ? '!text-primary' : '']" :to="item.link"
-              class="text-foreground/60 transition-colors hover:text-foreground">
-              {{ item.title }}
+          <!-- Menu untuk belum login -->
+          <template v-if="!isAuthenticated">
+            <NuxtLink to="/" class="text-foreground/60 transition-colors hover:text-foreground">Home</NuxtLink>
+            <NuxtLink to="/about" class="text-foreground/60 transition-colors hover:text-foreground">About</NuxtLink>
+            <NuxtLink to="/service" class="text-foreground/60 transition-colors hover:text-foreground">Service
             </NuxtLink>
-            <UiDropdownMenu v-else>
-              <UiDropdownMenuTrigger>
-                <div class="inline-flex items-center gap-1 text-foreground/60 transition-colors hover:text-foreground">
-                  <span>{{ item.title }}</span>
-                  <Icon name="heroicons:chevron-down" class="h-3 w-3" />
-                </div>
-              </UiDropdownMenuTrigger>
-              <UiDropdownMenuContent class="min-w-[180px]" align="start" :side-offset="5">
-                <UiDropdownMenuItem as-child v-for="(child, i) in item.children" :key="i">
-                  <template v-if="child.link">
-                    <NuxtLink class="cursor-pointer hover:bg-muted" :to="child.link">
-                      {{ child.title }}
-                    </NuxtLink>
-                  </template>
-                  <template v-if="child.action">
-                    <button class="cursor-pointer hover:bg-muted" @click="handleAction(child.action)">
-                      {{ child.title }}
-                    </button>
-                  </template>
-                </UiDropdownMenuItem>
-              </UiDropdownMenuContent>
-            </UiDropdownMenu>
+            <NuxtLink to="/contact" class="text-foreground/60 transition-colors hover:text-foreground">Contact
+            </NuxtLink>
+          </template>
+
+          <!-- Menu untuk sudah login -->
+          <template v-if="isAuthenticated">
+            <NuxtLink to="/profile" class="text-foreground/60 transition-colors hover:text-foreground">Profile
+            </NuxtLink>
+            <NuxtLink to="/order" class="text-foreground/60 transition-colors hover:text-foreground">Order</NuxtLink>
+            <NuxtLink to="/settings" class="text-foreground/60 transition-colors hover:text-foreground">Settings
+            </NuxtLink>
           </template>
         </nav>
       </div>
@@ -51,8 +40,18 @@
         <UiButton size="icon" class="text-muted-foreground md:hidden" variant="ghost" @click="isOpen = true">
           <Icon name="lucide:search" class="h-[18px] w-[18px]" />
         </UiButton>
-        <UiButton to="https://github.com/BayBreezy/ui-thing" target="_blank" class="h-9 w-9" variant="ghost"
-          size="icon">
+
+        <!-- Tampilkan "Sign up" dan "Log in" hanya jika belum login -->
+        <template v-if="!isAuthenticated">
+          <UiButton to="/register">Sign up</UiButton>
+          <UiButton variant="outline" to="/login">Log in</UiButton>
+        </template>
+        <!-- Tampilkan tombol logout jika sudah login -->
+        <template v-if="isAuthenticated">
+          <UiButton @click="logout">Logout</UiButton>
+        </template>
+
+        <UiButton to="https://github.com/" target="_blank" class="h-9 w-9" variant="ghost" size="icon">
           <Icon name="radix-icons:github-logo" class="h-[18px] w-[18px]" />
         </UiButton>
         <CommandSearch v-model="isOpen" />
@@ -75,7 +74,6 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
-import { NavMenuAdmin } from '@/constants/menuNavAdmin';
 import { useAuthStore } from "@/store/authStore";
 
 const isOpen = ref(false);
@@ -99,19 +97,16 @@ function setTheme(value: string) {
   authStore.setTheme(value);
 }
 
-
-function handleAction(action: string) {
-  if (action === 'logout') {
-    logout();
-  }
-}
+const isAuthenticated = computed(() => {
+  console.log("isLoggedIn", authStore.isLoggedIn);
+  return authStore.isLoggedIn;
+});
 
 function logout() {
   authStore.logout().then(() => {
     router.push("/login");
   });
 }
-
 
 defineShortcuts({
   meta_k: () => {
